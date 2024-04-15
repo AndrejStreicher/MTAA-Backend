@@ -8,7 +8,7 @@ import java.sql.Types
 object GeoPointSqlType : SqlType<GeoPoint>(Types.OTHER, "geography") {
     override fun doGetResult(rs: ResultSet, index: Int): GeoPoint? {
         val point = rs.getString(index)  // Assume format: 'POINT(lon lat)'
-        return point?.let {
+        return point.let {
             val parts = it.removePrefix("POINT(").removeSuffix(")").split(" ")
             GeoPoint(parts[1].toFloat(), parts[0].toFloat())
         }
@@ -28,7 +28,7 @@ object Users : Table<Nothing>("users") {
 sealed class GenericPointOfInterestSchemaClass(tableName: String) : Table<Nothing>(tableName) {
     val id = long("id").primaryKey()
     val name = varchar("name")
-    val location = registerColumn<GeoPoint>("location", GeoPointSqlType)
+    val location = registerColumn("location", GeoPointSqlType)
     val wikidataCode = varchar("wikidata_code")
 }
 
