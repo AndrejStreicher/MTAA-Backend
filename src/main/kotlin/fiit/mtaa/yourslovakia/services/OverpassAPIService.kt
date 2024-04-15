@@ -2,10 +2,7 @@ package fiit.mtaa.yourslovakia.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import fiit.mtaa.yourslovakia.models.Castle
-import fiit.mtaa.yourslovakia.models.GenericPointOfInterestModel
-import fiit.mtaa.yourslovakia.models.Peak
-import fiit.mtaa.yourslovakia.models.PlaceOfWorship
+import fiit.mtaa.yourslovakia.models.*
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
@@ -220,14 +217,18 @@ class OverpassAPIService(private val webClient: WebClient) {
 
         return elements.mapNotNull { element ->
             val tags = element["tags"] ?: return@mapNotNull null
+            val center = element["center"]
             if (tags["name"] == null || element["lat"] == null || element["lon"] == null || tags["castle_type"] == null) {
                 return@mapNotNull null  // Skip this element if essential fields are missing
             }
             Castle(
                 id = element["id"].asLong(),
                 name = tags["name"].asText(""),
-                latitude = element["lat"].asDouble(0.0).toFloat(),
-                longitude = element["lon"].asDouble(0.0).toFloat(),
+                location = GeoPoint(
+                    latitude = element["lat"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
+                    longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat()
+                    ?: 0.0f,
+                ),
                 wikidataCode = tags["wikidata"]?.asText(null),
                 castleType = tags["castle_type"].asText(""),
             )
@@ -250,8 +251,11 @@ class OverpassAPIService(private val webClient: WebClient) {
             PlaceOfWorship(
                 id = element["id"].asLong(),
                 name = tags["name"].asText(""),
-                latitude = element["lat"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
-                longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
+                location = GeoPoint(
+                    latitude = element["lat"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
+                    longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat()
+                    ?: 0.0f,
+                ),
                 wikidataCode = tags["wikidata"]?.asText(null),
                 religion = tags["religion"]?.asText(null),
                 denomination = tags["denomination"]?.asText(null)
@@ -275,8 +279,11 @@ class OverpassAPIService(private val webClient: WebClient) {
             Peak(
                 id = element["id"].asLong(),
                 name = tags["name"].asText(""),
-                latitude = element["lat"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
-                longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
+                location = GeoPoint(
+                    latitude = element["lat"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
+                    longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat()
+                    ?: 0.0f,
+                ),
                 wikidataCode = tags["wikidata"]?.asText(null),
                 elevation = tags["ele:bpv"]?.asDouble(0.0)?.toFloat() ?: tags["ele"]?.asDouble(0.0)?.toFloat()
             )
@@ -299,8 +306,11 @@ class OverpassAPIService(private val webClient: WebClient) {
             GenericPointOfInterestModel(
                 id = element["id"].asLong(),
                 name = tags["name"].asText(""),
-                latitude = element["lat"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
-                longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
+                location = GeoPoint(
+                    latitude = element["lat"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
+                    longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat()
+                    ?: 0.0f,
+                ),
                 wikidataCode = tags["wikidata"]?.asText(null),
                 type = type,
             )
