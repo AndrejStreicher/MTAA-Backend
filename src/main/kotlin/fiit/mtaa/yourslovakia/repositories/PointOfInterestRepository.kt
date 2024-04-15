@@ -63,16 +63,6 @@ class PointOfInterestRepository {
         }
     }
 
-    fun getAllUsers(): List<User> {
-        return DatabaseManager.database.from(Users).select().map { row ->
-            User(
-                    id = row[Users.id]!!,
-                    email = row[Users.email]!!,
-                    password = row[Users.password]!!
-            )
-        }
-    }
-
     @Transactional
     fun insertCastle(castle: Castle) {
         DatabaseManager.database.insert(Castles) {
@@ -115,15 +105,6 @@ class PointOfInterestRepository {
             set(it.location, poi.location)
             set(it.wikidataCode, poi.wikidataCode)
             set(it.type, poi.type)
-        }
-    }
-
-    @Transactional
-    fun insertUser(user: User) {
-        DatabaseManager.database.insert(Users) {
-            set(it.id, user.id)
-            set(it.email, user.email)
-            set(it.password, user.password)
         }
     }
 
@@ -177,16 +158,6 @@ class PointOfInterestRepository {
     }
 
     @Transactional
-    fun updateUser(user: User) {
-        DatabaseManager.database.update(Users) {
-            set(it.id, user.id)
-            set(it.email, user.email)
-            set(it.password, user.password)
-            where { it.id eq user.id }
-        }
-    }
-
-    @Transactional
     // Delete methods
     fun deleteCastle(castle: Castle) {
         DatabaseManager.database.delete(Castles) {
@@ -214,13 +185,4 @@ class PointOfInterestRepository {
             it.id eq genericPointOfInterest.id
         }
     }
-
-    @Transactional
-    fun deleteUser(user: User) {
-        DatabaseManager.database.delete(Users) {
-            it.id eq user.id
-        }
-    }
-
-
 }
