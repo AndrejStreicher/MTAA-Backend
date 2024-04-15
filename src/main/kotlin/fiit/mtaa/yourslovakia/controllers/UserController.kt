@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class UserController(private val userAuthenticationService: UserAuthenticationService) {
+
     @PostMapping("/users/create_user")
     fun createUser(
-            @RequestParam email: String,
-            @RequestParam plainTextPassword: String,
+        @RequestParam email: String,
+        @RequestParam plainTextPassword: String,
     ): ResponseEntity<Boolean> {
         userAuthenticationService.createUser(email, plainTextPassword)
         if (userAuthenticationService.authenticateUser(email, plainTextPassword)) {
@@ -20,8 +21,8 @@ class UserController(private val userAuthenticationService: UserAuthenticationSe
 
     @PutMapping("/users/update_email")
     fun updateUserEmail(
-            @RequestParam oldEmail: String,
-            @RequestParam newEmail: String,
+        @RequestParam oldEmail: String,
+        @RequestParam newEmail: String,
     ): ResponseEntity<Boolean> {
         userAuthenticationService.updateUserEmail(oldEmail, newEmail)
         if (userAuthenticationService.findUserByEmail(newEmail) != null) {
@@ -32,11 +33,11 @@ class UserController(private val userAuthenticationService: UserAuthenticationSe
 
     @PutMapping("/users/update_password")
     fun updateUserPassword(
-            @RequestParam email: String,
-            @RequestParam newPlainTextPassword: String,
+        @RequestParam email: String,
+        @RequestParam newPlainTextPassword: String,
     ): ResponseEntity<Boolean> {
         userAuthenticationService.updateUserPassword(email, newPlainTextPassword)
-        if (userAuthenticationService.authenticateUser(email, newPlainTextPassword) != null) {
+        if (userAuthenticationService.authenticateUser(email, newPlainTextPassword)) {
             return ResponseEntity.ok(true)
         }
         return ResponseEntity.badRequest().build()
@@ -44,7 +45,7 @@ class UserController(private val userAuthenticationService: UserAuthenticationSe
 
     @DeleteMapping("/users/delete_user")
     fun deleteUser(
-            @RequestParam email: String,
+        @RequestParam email: String,
     ): ResponseEntity<Boolean> {
         userAuthenticationService.deleteUser(email)
         if (userAuthenticationService.findUserByEmail(email) == null) {

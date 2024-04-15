@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class PointOfInterestController(private val pointOfInterestService: PointOfInterestService) {
 
-    @GetMapping("/pointsofinterest")
+    @GetMapping("/points_of_interest")
     fun getPointsOfInterestByLocation(
         @RequestParam latitude: Float,
         @RequestParam longitude: Float,
