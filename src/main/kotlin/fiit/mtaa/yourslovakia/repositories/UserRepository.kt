@@ -8,14 +8,14 @@ import org.ktorm.dsl.*
 import org.springframework.stereotype.Repository
 
 @Repository
-class UserRep4ository {
+class UserRepository {
 
     fun getAllUsers(): List<User> {
         return DatabaseManager.database.from(Users).select().map { row ->
             User(
-                    id = row[Users.id]!!,
-                    email = row[Users.email]!!,
-                    password = row[Users.password]!!
+                id = row[Users.id]!!,
+                email = row[Users.email]!!,
+                password = row[Users.password]!!
             )
         }
     }
