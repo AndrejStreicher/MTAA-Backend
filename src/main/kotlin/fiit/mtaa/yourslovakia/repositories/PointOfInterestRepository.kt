@@ -68,7 +68,7 @@ class PointOfInterestRepository {
         DatabaseManager.database.insert(Castles) {
             set(it.id, castle.id)
             set(it.name, castle.name)
-            set(it.location, castle.location)
+            set(it.location, castle.location)// Convert GeoPoint to WKT format
             set(it.wikidataCode, castle.wikidataCode)
             set(it.castleType, castle.castleType)
         }
