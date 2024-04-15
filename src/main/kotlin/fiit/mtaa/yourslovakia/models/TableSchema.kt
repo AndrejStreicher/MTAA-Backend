@@ -44,7 +44,6 @@ object GeoPointSqlType : SqlType<GeoPoint>(Types.OTHER, "geography") {
     }
 
     override fun doSetParameter(ps: PreparedStatement, index: Int, parameter: GeoPoint) {
-        val point = PGpoint(parameter.longitude.toDouble(), parameter.latitude.toDouble())
         val pgObject = PGobject()
         pgObject.type = "geometry"
         pgObject.value = "SRID=4326;POINT(${parameter.longitude} ${parameter.latitude})"
