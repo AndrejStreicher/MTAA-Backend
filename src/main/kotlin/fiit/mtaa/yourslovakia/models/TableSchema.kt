@@ -1,9 +1,23 @@
 package fiit.mtaa.yourslovakia.models
 
-import org.ktorm.schema.Table
-import org.ktorm.schema.float
-import org.ktorm.schema.long
-import org.ktorm.schema.varchar
+import org.ktorm.schema.*
+import java.sql.PreparedStatement
+import java.sql.ResultSet
+import java.sql.Types
+
+object GeoPointSqlType : SqlType<GeoPoint>(Types.OTHER, "geography") {
+    override fun doGetResult(rs: ResultSet, index: Int): GeoPoint? {
+        val point = rs.getString(index)  // Assume format: 'POINT(lon lat)'
+        return point?.let {
+            val parts = it.removePrefix("POINT(").removeSuffix(")").split(" ")
+            GeoPoint(parts[1].toFloat(), parts[0].toFloat())
+        }
+    }
+
+    override fun doSetParameter(ps: PreparedStatement, index: Int, parameter: GeoPoint) {
+        ps.setObject(index, "POINT(${parameter.longitude} ${parameter.latitude})", Types.OTHER)
+    }
+}
 
 object Users : Table<Nothing>("users") {
     val id = long("id").primaryKey()
@@ -14,8 +28,7 @@ object Users : Table<Nothing>("users") {
 sealed class GenericPointOfInterestSchemaClass(tableName: String) : Table<Nothing>(tableName) {
     val id = long("id").primaryKey()
     val name = varchar("name")
-    val latitude = float("latitude")
-    val longitude = float("longitude")
+    val location = registerColumn<GeoPoint>("location", GeoPointSqlType)
     val wikidataCode = varchar("wikidata_code")
 }
 

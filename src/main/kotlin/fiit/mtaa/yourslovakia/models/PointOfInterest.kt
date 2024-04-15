@@ -3,7 +3,6 @@ package fiit.mtaa.yourslovakia.models
 interface PointOfInterest {
     val id: Long
     val name: String
-    val latitude: Float
-    val longitude: Float
+    val location: GeoPoint
     val wikidataCode: String?
 }
