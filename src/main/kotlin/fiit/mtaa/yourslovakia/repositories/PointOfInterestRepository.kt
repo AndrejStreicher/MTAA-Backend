@@ -17,11 +17,11 @@ class PointOfInterestRepository {
     fun getAllCastles(): List<Castle> {
         return DatabaseManager.database.from(Castles).select().map { row ->
             Castle(
-                id = row[Castles.id]!!,
-                name = row[Castles.name]!!,
-                location = row[Castles.location]!!,
-                wikidataCode = row[Castles.wikidataCode],
-                castleType = row[Castles.castleType],
+                    id = row[Castles.id]!!,
+                    name = row[Castles.name]!!,
+                    location = row[Castles.location]!!,
+                    wikidataCode = row[Castles.wikidataCode],
+                    castleType = row[Castles.castleType],
             )
         }
     }
@@ -29,11 +29,11 @@ class PointOfInterestRepository {
     fun getAllPeaks(): List<Peak> {
         return DatabaseManager.database.from(Peaks).select().map { row ->
             Peak(
-                id = row[Peaks.id]!!,
-                name = row[Peaks.name]!!,
-                location = row[Peaks.location]!!,
-                wikidataCode = row[Peaks.wikidataCode],
-                elevation = row[Peaks.elevation]
+                    id = row[Peaks.id]!!,
+                    name = row[Peaks.name]!!,
+                    location = row[Peaks.location]!!,
+                    wikidataCode = row[Peaks.wikidataCode],
+                    elevation = row[Peaks.elevation]
             )
         }
     }
@@ -41,12 +41,12 @@ class PointOfInterestRepository {
     fun getAllPlacesOfWorship(): List<PlaceOfWorship> {
         return DatabaseManager.database.from(PlacesOfWorshipSchemaClass).select().map { row ->
             PlaceOfWorship(
-                id = row[PlacesOfWorshipSchemaClass.id]!!,
-                name = row[PlacesOfWorshipSchemaClass.name]!!,
-                location = row[PlacesOfWorshipSchemaClass.location]!!,
-                wikidataCode = row[PlacesOfWorshipSchemaClass.wikidataCode],
-                religion = row[PlacesOfWorshipSchemaClass.religion],
-                denomination = row[PlacesOfWorshipSchemaClass.denomination]
+                    id = row[PlacesOfWorshipSchemaClass.id]!!,
+                    name = row[PlacesOfWorshipSchemaClass.name]!!,
+                    location = row[PlacesOfWorshipSchemaClass.location]!!,
+                    wikidataCode = row[PlacesOfWorshipSchemaClass.wikidataCode],
+                    religion = row[PlacesOfWorshipSchemaClass.religion],
+                    denomination = row[PlacesOfWorshipSchemaClass.denomination]
             )
         }
     }
@@ -54,11 +54,21 @@ class PointOfInterestRepository {
     fun getAllGenericPointsOfInterest(): List<GenericPointOfInterestModel> {
         return DatabaseManager.database.from(GenericPointsOfInterest).select().map { row ->
             GenericPointOfInterestModel(
-                id = row[GenericPointsOfInterest.id]!!,
-                name = row[GenericPointsOfInterest.name]!!,
-                location = row[GenericPointsOfInterest.location]!!,
-                wikidataCode = row[GenericPointsOfInterest.wikidataCode],
-                type = row[GenericPointsOfInterest.type]!!
+                    id = row[GenericPointsOfInterest.id]!!,
+                    name = row[GenericPointsOfInterest.name]!!,
+                    location = row[GenericPointsOfInterest.location]!!,
+                    wikidataCode = row[GenericPointsOfInterest.wikidataCode],
+                    type = row[GenericPointsOfInterest.type]!!
+            )
+        }
+    }
+
+    fun getAllUsers(): List<User> {
+        return DatabaseManager.database.from(Users).select().map { row ->
+            User(
+                    id = row[Users.id]!!,
+                    email = row[Users.email]!!,
+                    password = row[Users.password]!!
             )
         }
     }
@@ -105,6 +115,15 @@ class PointOfInterestRepository {
             set(it.location, poi.location)
             set(it.wikidataCode, poi.wikidataCode)
             set(it.type, poi.type)
+        }
+    }
+
+    @Transactional
+    fun insertUser(user: User) {
+        DatabaseManager.database.insert(Users) {
+            set(it.id, user.id)
+            set(it.email, user.email)
+            set(it.password, user.password)
         }
     }
 
@@ -158,6 +177,16 @@ class PointOfInterestRepository {
     }
 
     @Transactional
+    fun updateUser(user: User) {
+        DatabaseManager.database.update(Users) {
+            set(it.id, user.id)
+            set(it.email, user.email)
+            set(it.password, user.password)
+            where { it.id eq user.id }
+        }
+    }
+
+    @Transactional
     // Delete methods
     fun deleteCastle(castle: Castle) {
         DatabaseManager.database.delete(Castles) {
@@ -183,6 +212,13 @@ class PointOfInterestRepository {
     fun deleteGenericPointOfInterest(genericPointOfInterest: GenericPointOfInterestModel) {
         DatabaseManager.database.delete(GenericPointsOfInterest) {
             it.id eq genericPointOfInterest.id
+        }
+    }
+
+    @Transactional
+    fun deleteUser(user: User) {
+        DatabaseManager.database.delete(Users) {
+            it.id eq user.id
         }
     }
 
