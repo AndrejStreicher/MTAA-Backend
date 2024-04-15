@@ -46,4 +46,18 @@ class UserRepository {
         }
     }
 
+    fun getUserByEmail(email: String): User? {
+        return DatabaseManager.database.from(Users)
+                .select()
+                .where { Users.email eq email }
+                .map { row ->
+                    User(
+                            id = row[Users.id]!!,
+                            email = row[Users.email]!!,
+                            password = row[Users.password]!!
+                    )
+                }
+                .singleOrNull()
+    }
+
 }
