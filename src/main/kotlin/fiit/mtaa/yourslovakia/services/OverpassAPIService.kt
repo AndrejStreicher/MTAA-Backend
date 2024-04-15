@@ -226,7 +226,7 @@ class OverpassAPIService(private val webClient: WebClient) {
                 name = tags["name"].asText(""),
                 location = GeoPoint(
                     latitude = element["lat"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
-                    longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat()
+                    longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lon"]?.asDouble()?.toFloat()
                     ?: 0.0f,
                 ),
                 wikidataCode = tags["wikidata"]?.asText(null),
@@ -253,7 +253,7 @@ class OverpassAPIService(private val webClient: WebClient) {
                 name = tags["name"].asText(""),
                 location = GeoPoint(
                     latitude = element["lat"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
-                    longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat()
+                    longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lon"]?.asDouble()?.toFloat()
                     ?: 0.0f,
                 ),
                 wikidataCode = tags["wikidata"]?.asText(null),
@@ -281,7 +281,7 @@ class OverpassAPIService(private val webClient: WebClient) {
                 name = tags["name"].asText(""),
                 location = GeoPoint(
                     latitude = element["lat"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
-                    longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat()
+                    longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lon"]?.asDouble()?.toFloat()
                     ?: 0.0f,
                 ),
                 wikidataCode = tags["wikidata"]?.asText(null),
@@ -308,7 +308,7 @@ class OverpassAPIService(private val webClient: WebClient) {
                 name = tags["name"].asText(""),
                 location = GeoPoint(
                     latitude = element["lat"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat() ?: 0.0f,
-                    longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lat"]?.asDouble()?.toFloat()
+                    longitude = element["lon"]?.asDouble(0.0)?.toFloat() ?: center["lon"]?.asDouble()?.toFloat()
                     ?: 0.0f,
                 ),
                 wikidataCode = tags["wikidata"]?.asText(null),
