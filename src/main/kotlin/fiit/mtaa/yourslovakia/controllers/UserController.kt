@@ -25,7 +25,7 @@ class UserController(private val userAuthenticationService: UserAuthenticationSe
         @RequestParam newEmail: String,
     ): ResponseEntity<Boolean> {
         userAuthenticationService.updateUserEmail(oldEmail, newEmail)
-        if (userAuthenticationService.findUserByEmail(newEmail) != null) {
+        if (userAuthenticationService.loadUserByUsername(newEmail) != null) {
             return ResponseEntity.ok(true)
         }
         return ResponseEntity.badRequest().build()
@@ -48,7 +48,7 @@ class UserController(private val userAuthenticationService: UserAuthenticationSe
         @RequestParam email: String,
     ): ResponseEntity<Boolean> {
         userAuthenticationService.deleteUser(email)
-        if (userAuthenticationService.findUserByEmail(email) == null) {
+        if (userAuthenticationService.loadUserByUsername(email) == null) {
             return ResponseEntity.ok(true)
         }
         return ResponseEntity.badRequest().build()
