@@ -1,5 +1,6 @@
 package fiit.mtaa.yourslovakia.controllers
 
+import fiit.mtaa.yourslovakia.models.AuthenticationRequest
 import fiit.mtaa.yourslovakia.services.UserAuthenticationService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -9,11 +10,10 @@ class UserController(private val userAuthenticationService: UserAuthenticationSe
 
     @PostMapping("/users/create_user")
     fun createUser(
-        @RequestParam email: String,
-        @RequestParam plainTextPassword: String,
+        @RequestBody authRequest: AuthenticationRequest
     ): ResponseEntity<Boolean> {
-        userAuthenticationService.createUser(email, plainTextPassword)
-        if (userAuthenticationService.authenticateUser(email, plainTextPassword)) {
+        userAuthenticationService.createUser(authRequest.email, authRequest.password)
+        if (userAuthenticationService.authenticateUser(authRequest.email, authRequest.password)) {
             return ResponseEntity.ok(true)
         }
         return ResponseEntity.badRequest().build()
