@@ -4,6 +4,7 @@ import fiit.mtaa.yourslovakia.DatabaseManager
 import fiit.mtaa.yourslovakia.models.*
 import fiit.mtaa.yourslovakia.repositories.PointOfInterestRepository
 import jakarta.transaction.Transactional
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.nio.ByteBuffer
@@ -12,9 +13,9 @@ import java.nio.ByteOrder
 @Service
 class PointOfInterestService(
     private val repository: PointOfInterestRepository,
-    private val overpass: OverpassAPIService
+    private val overpass: OverpassAPIService,
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) {
-
     fun getMonuments(
         userLocation: GeoPoint,
         maxDistance: Double,
@@ -269,12 +270,15 @@ ORDER BY distance ASC;
         update: (T) -> Unit,
         delete: (T) -> Unit
     ) {
+        val updatedItems = mutableListOf<T>()
+
         latestData.forEach { newItem ->
             val existingItem = existingData[newItem.id]
             if (existingItem == null) {
                 insert(newItem)
             } else if (existingItem != newItem) {
                 update(newItem)
+                updatedItems.add(newItem)
             }
         }
 
@@ -283,5 +287,14 @@ ORDER BY distance ASC;
                 delete(existingItem)
             }
         }
+
+        if (updatedItems.isNotEmpty()) {
+            notifyUpdates(updatedItems)
+        }
+    }
+
+    private fun notifyUpdates(updatedItems: List<PointOfInterest>) {
+        val event = POIUpdatedEvent(updatedItems)
+        applicationEventPublisher.publishEvent(event)
     }
 }
