@@ -1,12 +1,17 @@
 package fiit.mtaa.yourslovakia.controllers
 
 import fiit.mtaa.yourslovakia.models.AuthenticationRequest
+import fiit.mtaa.yourslovakia.services.TokenService
 import fiit.mtaa.yourslovakia.services.UserAuthenticationService
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class UserController(private val userAuthenticationService: UserAuthenticationService) {
+class UserController(
+    private val tokenService: TokenService,
+    private val userAuthenticationService: UserAuthenticationService
+) {
 
     @PostMapping("/users/create_user")
     fun createUser(
@@ -21,36 +26,48 @@ class UserController(private val userAuthenticationService: UserAuthenticationSe
 
     @PutMapping("/users/update_email")
     fun updateUserEmail(
-        @RequestParam oldEmail: String,
         @RequestParam newEmail: String,
+        @RequestHeader("Authorization") authorization: String
     ): ResponseEntity<Boolean> {
+        val token = authorization.substring("Bearer ".length)
+        val oldEmail = tokenService.extractEmail(token) ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+
         userAuthenticationService.updateUserEmail(oldEmail, newEmail)
-        if (userAuthenticationService.loadUserByUsername(newEmail) != null) {
-            return ResponseEntity.ok(true)
+        return if (userAuthenticationService.loadUserByUsername(newEmail) != null) {
+            ResponseEntity.ok(true)
+        } else {
+            ResponseEntity.badRequest().build()
         }
-        return ResponseEntity.badRequest().build()
     }
 
     @PutMapping("/users/update_password")
     fun updateUserPassword(
-        @RequestParam email: String,
         @RequestParam newPlainTextPassword: String,
+        @RequestHeader("Authorization") authorization: String
     ): ResponseEntity<Boolean> {
+        val token = authorization.substring("Bearer ".length)
+        val email = tokenService.extractEmail(token) ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+
         userAuthenticationService.updateUserPassword(email, newPlainTextPassword)
-        if (userAuthenticationService.authenticateUser(email, newPlainTextPassword)) {
-            return ResponseEntity.ok(true)
+        return if (userAuthenticationService.authenticateUser(email, newPlainTextPassword)) {
+            ResponseEntity.ok(true)
+        } else {
+            ResponseEntity.badRequest().build()
         }
-        return ResponseEntity.badRequest().build()
     }
 
     @DeleteMapping("/users/delete_user")
     fun deleteUser(
-        @RequestParam email: String,
+        @RequestHeader("Authorization") authorization: String
     ): ResponseEntity<Boolean> {
+        val token = authorization.substring("Bearer ".length)
+        val email = tokenService.extractEmail(token) ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+
         userAuthenticationService.deleteUser(email)
-        if (userAuthenticationService.loadUserByUsername(email) == null) {
-            return ResponseEntity.ok(true)
+        return if (userAuthenticationService.loadUserByUsername(email) == null) {
+            ResponseEntity.ok(true)
+        } else {
+            ResponseEntity.badRequest().build()
         }
-        return ResponseEntity.badRequest().build()
     }
 }
