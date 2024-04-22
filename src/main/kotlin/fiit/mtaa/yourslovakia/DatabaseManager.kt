@@ -12,10 +12,10 @@ object DatabaseManager {
         classLoader.getResourceAsStream("application.properties").use {
             properties.load(it)
 
-            val url = properties.getProperty("spring.datasource.url")
-            val driver = properties.getProperty("spring.datasource.driver-class-name")
-            val user = properties.getProperty("spring.datasource.username")
-            val password = properties.getProperty("spring.datasource.password")
+            val url = System.getenv("DB_URL")
+            val driver = "org.postgresql.Driver"
+            val user = System.getenv("DB_USER")
+            val password = System.getenv("DB_PASSWORD")
 
             database = Database.connect(url, driver, user, password)
         }

@@ -23,7 +23,6 @@ class UserRepository {
     @Transactional
     fun insertUser(user: User) {
         DatabaseManager.database.insert(Users) {
-            set(it.id, user.id)
             set(it.email, user.email)
             set(it.password, user.password)
         }
